@@ -1,73 +1,78 @@
-import "./userList.css";
-import { toast } from "react-toastify";
 import { DataGrid } from "@material-ui/data-grid";
 import { DeleteOutline } from "@material-ui/icons";
 import { userRows } from "../../dummyData";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { userSlice } from "../../redux/reducer/userSlice";
+import { voucherSlice } from "../../redux/reducer/voucherSlice";
+import { toast } from "react-toastify";
 import axios from "axios";
-import userApi from "../../api/userApi";
+import voucherApi from "../../api/voucherApi";
+import "./listVoucher.css";
 
-export default function UserList() {
+export default function VoucherList() {
   const [data, setData] = useState(userRows);
   const dispatch = useDispatch();
-  const users = useSelector((state) => state.users.arrayUsers);
+  const vouchers = useSelector((state) => state.vouchers.vouchers);
+
   useEffect(() => {
-    const getUsersList = async () => {
+    const getVoucherList = async () => {
       try {
-        const res = await userApi.getUsersList();
-        dispatch(userSlice.actions.setUsers(res.data.users));
+        const res = await voucherApi.getVochers(1);
+        console.log(res);
+        dispatch(voucherSlice.actions.setVoucher(res.data.vouchers));
       } catch (err) {
         console.log(err);
       }
     };
-    getUsersList();
+
+    getVoucherList();
   }, []);
-  // console.log(dispatch(movieSlice.actions.getMovie()));
-  //
+
   const handleDelete = async (id) => {
     try {
       console.log(id);
-      const newUsersList = users.filter((user) => user._id !== id);
-      dispatch(userSlice.actions.setUsers(newUsersList));
-      const res = await userApi.deleteUser(id);
+      const newVoucherList = vouchers.filter((voucher) => voucher._id !== id);
+      dispatch(voucherSlice.actions.setVoucher(newVoucherList));
+      const res = await voucherApi.deleteVoucher(id);
       toast.success(res.data.message);
     } catch (err) {
       toast.error(err.response.data);
     }
   };
-
+  console.log(vouchers);
   const columns = [
     { field: "_id", headerName: "ID", width: 90 },
     {
-      field: "user",
-      headerName: "User",
-      width: 120,
+      field: "image",
+      headerName: "Image",
+      width: 180,
       renderCell: (params) => {
         return (
           <div className="userListUser">
-            <img className="userListImg" src={params.row.profilePic} alt="" />
-            {params.row.userncame}
+            <img className="voucherListImg" src={params.row.image} alt="" />
           </div>
         );
       },
     },
-    { field: "email", headerName: "Email", width: 200 },
     {
-      field: "isAdmin",
-      headerName: "IsAdmin",
-      width: 120,
+      field: "voucher_code",
+      headerName: "Voucher Code",
+      width: 200,
+      renderCell: (params) => {
+        return (
+          <div className="userListUser">{params.row.voucher_code.length}</div>
+        );
+      },
     },
     {
-      field: "point",
-      headerName: "Point",
-      width: 160,
+      field: "createdAt",
+      headerName: "Create At",
+      width: 180,
     },
     {
-      field: "wallet_balance",
-      headerName: "Money",
+      field: "point_cost",
+      headerName: "Point Cost",
       width: 160,
     },
 
@@ -79,8 +84,8 @@ export default function UserList() {
         return (
           <>
             <Link
-              to={{ pathname: "/users/" + params.row._id }}
-              state={{ user: params.row }}
+              to={{ pathname: "/vouchers/" + params.row._id }}
+              state={{ voucher: params.row }}
             >
               <button className="userListEdit">Edit</button>
             </Link>
@@ -97,7 +102,7 @@ export default function UserList() {
   return (
     <div className="userList">
       <DataGrid
-        rows={users}
+        rows={vouchers}
         disableSelectionOnClick
         columns={columns}
         pageSize={8}

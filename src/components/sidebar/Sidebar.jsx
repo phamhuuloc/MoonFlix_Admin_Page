@@ -12,10 +12,24 @@ import {
   ChatBubbleOutline,
   WorkOutline,
   Report,
+  Settings,
+  SellOutlined,
 } from "@material-ui/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { adminSlice } from "../../redux/reducer/adminSlice";
 
 export default function Sidebar() {
+  const admin = useSelector((state) => state.admin.info);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    window.localStorage.removeItem("token");
+    window.localStorage.removeItem("admin");
+    dispatch(adminSlice.actions.setAdmin(null));
+    navigate("/login");
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebarWrapper">
@@ -28,14 +42,6 @@ export default function Sidebar() {
                 Home
               </li>
             </Link>
-            <li className="sidebarListItem">
-              <Timeline className="sidebarIcon" />
-              Analytics
-            </li>
-            <li className="sidebarListItem">
-              <TrendingUp className="sidebarIcon" />
-              Sales
-            </li>
           </ul>
         </div>
         <div className="sidebarMenu">
@@ -59,16 +65,29 @@ export default function Sidebar() {
                 Lists
               </li>
             </Link>
+            <Link to="/vouchers" className="link">
+              <li className="sidebarListItem">
+                <PermIdentity className="sidebarIcon" />
+                Voucher
+              </li>
+            </Link>
+
             <Link to="/newMovies" className="link">
               <li className="sidebarListItem">
                 <BarChart className="sidebarIcon" />
                 Add Movie
               </li>
             </Link>
-            <Link to="/newList" className="link">
+            <Link to="/newListMovie" className="link">
               <li className="sidebarListItem">
                 <BarChart className="sidebarIcon" />
                 Add List
+              </li>
+            </Link>
+            <Link to="/newVouchers" className="link">
+              <li className="sidebarListItem">
+                <BarChart className="sidebarIcon" />
+                Add Voucher
               </li>
             </Link>
           </ul>
@@ -80,10 +99,10 @@ export default function Sidebar() {
               <MailOutline className="sidebarIcon" />
               Mail
             </li>
-            <li className="sidebarListItem">
-              <DynamicFeed className="sidebarIcon" />
-              Feedback
-            </li>
+            {/* <li className="sidebarListItem"> */}
+            {/*   <DynamicFeed className="sidebarIcon" /> */}
+            {/*   Feedback */}
+            {/* </li> */}
             <li className="sidebarListItem">
               <ChatBubbleOutline className="sidebarIcon" />
               Messages
@@ -91,19 +110,24 @@ export default function Sidebar() {
           </ul>
         </div>
         <div className="sidebarMenu">
-          <h3 className="sidebarTitle">Staff</h3>
+          <h3 className="sidebarTitle">Admin</h3>
           <ul className="sidebarList">
             <li className="sidebarListItem">
-              <WorkOutline className="sidebarIcon" />
-              Manage
+              <Settings className="sidebarIcon" />
+              <Link
+                to={{ pathname: "/users/" + admin._id }}
+                state={{ user: admin }}
+              >
+                Admin Info
+              </Link>
             </li>
-            <li className="sidebarListItem">
-              <Timeline className="sidebarIcon" />
-              Analytics
-            </li>
-            <li className="sidebarListItem">
+            {/* <li className="sidebarListItem"> */}
+            {/*   <Timeline className="sidebarIcon" /> */}
+            {/*   Analytics */}
+            {/* </li> */}
+            <li className="sidebarListItem" onClick={() => handleLogout()}>
               <Report className="sidebarIcon" />
-              Reports
+              Logout
             </li>
           </ul>
         </div>

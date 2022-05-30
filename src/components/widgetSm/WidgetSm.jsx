@@ -1,21 +1,15 @@
 import "./widgetSm.css";
 import { NewReleases, Visibility } from "@material-ui/icons";
 import { useEffect, useState } from "react";
+import userApi from "../../api/userApi";
+import { Link } from "react-router-dom";
 import axios from "axios";
 export default function WidgetSm() {
   const [newUsers, setNewUsers] = useState([]);
   useEffect(() => {
     const getNewUsers = async () => {
       try {
-        const res = await axios.get(
-          "https://sever-json-netflix.herokuapp.com/api/users/?new=true",
-          {
-            headers: {
-              token:
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODQ3NTQ0YWUzMTRlZGUwNTljMTRmOCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY1Mjg3NTc3MCwiZXhwIjoxNjUzMzA3NzcwfQ.53wQdT-V-FNB1hwkbaHFgxMCWGIfWm8tr6RF3yspekw",
-            },
-          }
-        );
+        const res = await userApi.getNewUsers();
         setNewUsers(res.data.users);
       } catch (err) {
         console.log(err);
@@ -23,7 +17,7 @@ export default function WidgetSm() {
     };
     getNewUsers();
   }, []);
-  console.log(newUsers.createAt);
+  console.log(newUsers);
   return (
     <div className="widgetSm">
       <span className="widgetSmTitle">New Join Members</span>
@@ -40,16 +34,21 @@ export default function WidgetSm() {
                 className="widgetSmImg"
               />
               <div className="widgetSmUser">
+                <span className="widgetSmUserTitle">User Name</span>
                 <span className="widgetSmUsername">{user.username}</span>
-                {/* <span className="widgetSmUserTitle">Software Engineer</span> */}
               </div>
               <div className="widgetSmUser">
                 <span className="widgetSmUserTitle">{user.createAt}</span>
               </div>
 
               <button className="widgetSmButton">
-                <Visibility className="widgetSmIcon" />
-                Display
+                <Link
+                  to={{ pathname: "/users/" + user._id }}
+                  state={{ user: user }}
+                >
+                  <Visibility className="widgetSmIcon" />
+                  Display
+                </Link>
               </button>
             </li>
           );

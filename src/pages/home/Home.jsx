@@ -2,6 +2,7 @@ import Chart from "../../components/chart/Chart";
 import FeaturedInfo from "../../components/featuredInfo/FeaturedInfo";
 import "./home.css";
 import { userData } from "../../dummyData";
+import adminApi from "../../api/adminApi";
 import WidgetSm from "../../components/widgetSm/WidgetSm";
 import WidgetLg from "../../components/widgetLg/WidgetLg";
 import { useEffect, useMemo, useState } from "react";
@@ -30,15 +31,8 @@ export default function Home() {
   useEffect(() => {
     const getStats = async () => {
       try {
-        const res = await axios.get(
-          "https://sever-json-netflix.herokuapp.com/api/users/stats",
-          {
-            // headers: {
-            //   token:
-            //     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODg1NmE4M2MwZDcyMzQ4YmNlYWM1YiIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY1MzE4NjY3NCwiZXhwIjoxNjUzNjE4Njc0fQ.BD1iUuDKdnQdBdhjA-8x1lENGGlC9l_l2fKHx7m6eyg",
-            // },
-          }
-        );
+        const res = await adminApi.getStats();
+        console.log(res);
         const statsList = res.data.data.sort(function (a, b) {
           return a._id - b._id;
         });

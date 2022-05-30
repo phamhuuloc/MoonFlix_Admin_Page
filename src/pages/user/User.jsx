@@ -5,11 +5,93 @@ import {
   PermIdentity,
   PhoneAndroid,
   Publish,
+  AccountBalanceWallet,
+  Loyalty,
 } from "@material-ui/icons";
-import { Link } from "react-router-dom";
+
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+
+import storage from "../../firebase";
+import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import userApi from "../../api/userApi";
+import { toast } from "react-toastify";
 import "./user.css";
 
 export default function User() {
+  const location = useLocation();
+  const user = location.state.user;
+
+  const [username, setUsername] = useState(null);
+  const [profilePic, setProfilePic] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [phone, setPhone] = useState(null);
+  const [wallet_balance, setWallet_Balance] = useState(0);
+  const [point, setPoint] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [uploaded, setUploaded] = useState(0);
+  const [userInfo, setUserInfo] = useState(null);
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setUserInfo({ ...userInfo, [e.target.name]: value });
+  };
+  const imageChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setProfilePic(e.target.files[0]);
+    }
+  };
+
+  const removeSelectedImage = () => {
+    setProfilePic();
+  };
+
+  const upload = (items) => {
+    items.forEach((item) => {
+      // const fileName = new Date().getTime() + item.label + item.file;
+      const storageRef = ref(storage, `/vouchers/${item.file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, item.file);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+        },
+        (error) => {
+          console.log(error);
+        },
+        async () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+            setUserInfo((prev) => {
+              return { ...prev, [item.label]: url };
+            });
+            setUploaded((prev) => prev + 1);
+          });
+        }
+      );
+    });
+  };
+
+  const handleUpload = (e) => {
+    e.preventDefault();
+    upload([{ file: profilePic, label: "profilePic" }]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await userApi.updateUser(user._id, userInfo);
+      toast.success(res.data.message);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div className="user">
       <div className="userTitleContainer">
@@ -21,38 +103,33 @@ export default function User() {
       <div className="userContainer">
         <div className="userShow">
           <div className="userShowTop">
-            <img
-              src="https://images.pexels.com/photos/1152994/pexels-photo-1152994.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-              alt=""
-              className="userShowImg"
-            />
+            <img src={user.profilePic} alt="" className="userShowImg" />
             <div className="userShowTopTitle">
-              <span className="userShowUsername">Anna Becker</span>
-              <span className="userShowUserTitle">Software Engineer</span>
+              <span className="userShowUsername">{user.username}</span>
             </div>
           </div>
           <div className="userShowBottom">
             <span className="userShowTitle">Account Details</span>
             <div className="userShowInfo">
               <PermIdentity className="userShowIcon" />
-              <span className="userShowInfoTitle">annabeck99</span>
-            </div>
-            <div className="userShowInfo">
-              <CalendarToday className="userShowIcon" />
-              <span className="userShowInfoTitle">10.12.1999</span>
+              <span className="userShowInfoTitle">{user.username}</span>
             </div>
             <span className="userShowTitle">Contact Details</span>
             <div className="userShowInfo">
               <PhoneAndroid className="userShowIcon" />
-              <span className="userShowInfoTitle">+1 123 456 67</span>
+              <span className="userShowInfoTitle">{user.phone}</span>
             </div>
             <div className="userShowInfo">
               <MailOutline className="userShowIcon" />
-              <span className="userShowInfoTitle">annabeck99@gmail.com</span>
+              <span className="userShowInfoTitle">{user.email}</span>
             </div>
             <div className="userShowInfo">
-              <LocationSearching className="userShowIcon" />
-              <span className="userShowInfoTitle">New York | USA</span>
+              <AccountBalanceWallet className="userShowIcon" />
+              <span className="userShowInfoTitle">{user.wallet_balance}</span>
+            </div>
+            <div className="userShowInfo">
+              <Loyalty className="userShowIcon" />
+              <span className="userShowInfoTitle">{user.point}</span>
             </div>
           </div>
         </div>
@@ -65,14 +142,8 @@ export default function User() {
                 <input
                   type="text"
                   placeholder="annabeck99"
-                  className="userUpdateInput"
-                />
-              </div>
-              <div className="userUpdateItem">
-                <label>Full Name</label>
-                <input
-                  type="text"
-                  placeholder="Anna Becker"
+                  name="username"
+                  onChange={handleChange}
                   className="userUpdateInput"
                 />
               </div>
@@ -80,7 +151,9 @@ export default function User() {
                 <label>Email</label>
                 <input
                   type="text"
-                  placeholder="annabeck99@gmail.com"
+                  name="email"
+                  onChange={handleChange}
+                  placeholder="jony@gmail.com"
                   className="userUpdateInput"
                 />
               </div>
@@ -88,32 +161,82 @@ export default function User() {
                 <label>Phone</label>
                 <input
                   type="text"
-                  placeholder="+1 123 456 67"
+                  name="phone"
+                  onChange={handleChange}
+                  placeholder="0353339425"
                   className="userUpdateInput"
                 />
               </div>
               <div className="userUpdateItem">
-                <label>Address</label>
+                <label>Wallet Balance</label>
                 <input
-                  type="text"
-                  placeholder="New York | USA"
+                  type="number"
+                  name="wallet_balance"
+                  onChange={handleChange}
+                  placeholder="0"
                   className="userUpdateInput"
                 />
               </div>
+              <div className="userUpdateItem">
+                <label>Point</label>
+                <input
+                  type="number"
+                  name="point"
+                  placeholder=""
+                  onChange={handleChange}
+                  className="userUpdateInput"
+                />
+              </div>
+              {user.isAdmin ? (
+                <div></div>
+              ) : (
+                <div className="userUpdateItem">
+                  <label>Type</label>
+                  <select
+                    name="isAdmin"
+                    className="userUpdateInput"
+                    onChange={handleChange}
+                  >
+                    <option value="false">isMember</option>
+                    <option value="true">isAdmin</option>
+                  </select>
+                </div>
+              )}
             </div>
             <div className="userUpdateRight">
               <div className="userUpdateUpload">
-                <img
-                  className="userUpdateImg"
-                  src="https://images.pexels.com/photos/1152994/pexels-photo-1152994.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-                  alt=""
-                />
+                {profilePic ? (
+                  <div>
+                    <img
+                      src={URL.createObjectURL(profilePic)}
+                      alt="Thumb"
+                      className="userUpdateImg"
+                    />
+                  </div>
+                ) : (
+                  <img className="userUpdateImg" src={user.profilePic} alt="" />
+                )}
                 <label htmlFor="file">
                   <Publish className="userUpdateIcon" />
                 </label>
-                <input type="file" id="file" style={{ display: "none" }} />
+                <input
+                  type="file"
+                  id="file"
+                  style={{ display: "none" }}
+                  name="profilePic"
+                  onChange={imageChange}
+                  // onChange={(e) => setProfilePic(e.target.files[0])}
+                />
               </div>
-              <button className="userUpdateButton">Update</button>
+              {uploaded === 1 ? (
+                <button className="addProductButton" onClick={handleSubmit}>
+                  Create
+                </button>
+              ) : (
+                <button className="addProductButton" onClick={handleUpload}>
+                  Upload
+                </button>
+              )}
             </div>
           </form>
         </div>
