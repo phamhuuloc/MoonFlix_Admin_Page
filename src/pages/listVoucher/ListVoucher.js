@@ -1,6 +1,5 @@
 import { DataGrid } from "@material-ui/data-grid";
 import { DeleteOutline } from "@material-ui/icons";
-import { userRows } from "../../dummyData";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +10,6 @@ import voucherApi from "../../api/voucherApi";
 import "./listVoucher.css";
 
 export default function VoucherList() {
-  const [data, setData] = useState(userRows);
   const dispatch = useDispatch();
   const vouchers = useSelector((state) => state.vouchers.vouchers);
 

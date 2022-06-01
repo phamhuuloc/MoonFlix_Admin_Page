@@ -2,7 +2,6 @@ import "./userList.css";
 import { toast } from "react-toastify";
 import { DataGrid } from "@material-ui/data-grid";
 import { DeleteOutline } from "@material-ui/icons";
-import { userRows } from "../../dummyData";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +10,6 @@ import axios from "axios";
 import userApi from "../../api/userApi";
 
 export default function UserList() {
-  const [data, setData] = useState(userRows);
   const dispatch = useDispatch();
   const users = useSelector((state) => state.users.arrayUsers);
   useEffect(() => {
