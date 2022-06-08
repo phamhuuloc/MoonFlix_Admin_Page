@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { adminSlice } from "../../redux/reducer/adminSlice";
 import { toast } from "react-toastify";
 import adminApi from "../../api/adminApi";
+import logo from "../../images/lomo-removebg-preview.png";
 import "./login.scss";
 const Login = () => {
   const [data, setData] = useState({ email: "", password: "" });
@@ -30,11 +31,7 @@ const Login = () => {
     <div className="login">
       <div className="top">
         <div className="wrapper">
-          <img
-            className="logo"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/2560px-Netflix_2015_logo.svg.png"
-            alt=""
-          />
+          <img className="logo" src={logo} alt="" />
         </div>
       </div>
       <div className="container">
@@ -55,12 +52,7 @@ const Login = () => {
           <button className="loginButton" onClick={(e) => handleLogin(e)}>
             <b>Sign In</b>
           </button>
-          <span>
-            Net to Netflix?
-            <Link to="/register">
-              <b> Sign Up Now</b>
-            </Link>
-          </span>
+          <span></span>
           <small>
             This page is protected by Google reCAPTCHA to ensure you're not a
             bot. <b>Learn More</b>

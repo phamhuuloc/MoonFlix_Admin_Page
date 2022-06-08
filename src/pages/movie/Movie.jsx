@@ -12,22 +12,24 @@ import {
 import storage from "../../firebase";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import movieApi from "../../api/movieApi";
 export default function Movie() {
     const location = useLocation();
     const movie = location.state.movie;
 
-    const [title, setTitle] = useState(null);
-    const [year, setYear] = useState(null);
-    const [genre, setGenre] = useState(null);
-    const [limit, setLimit] = useState(null);
+    // const [title, setTitle] = useState(null);
+    // const [year, setYear] = useState(null);
+    // const [genre, setGenre] = useState(null);
+    // const [limit, setLimit] = useState(null);
     const [img, setImg] = useState(null);
     const [trailer, setTrailer] = useState(null);
     const [video, setVideo] = useState(null);
+    const [uploaded, setUploaded] = useState(0);
 
-    const [movieInfo, setMovieInfo] = useState(null);
+    const [movieInfo, setMovieInfo] = useState({});
 
     const handleChange = (e) => {
-        const value = e.target.name;
+        const value = e.target.value;
         setMovieInfo({ ...movieInfo, [e.target.name]: value });
     };
     const removeSelectedImage = () => {
@@ -59,6 +61,7 @@ export default function Movie() {
                         setMovieInfo((prev) => {
                             return { ...prev, [item.label]: url };
                         });
+                        setUploaded((prev) => prev + 1);
                     });
                 }
             );
@@ -69,9 +72,17 @@ export default function Movie() {
         e.preventDefault();
         upload([
             { file: img, label: "img" },
-            { file: trailer, label: "trailer" },
             { file: video, label: "video" },
         ]);
+    };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await movieApi.updateMovie(movie._id, movieInfo);
+            toast.success(res.data.message);
+        } catch (err) {
+            console.log(err);
+        }
     };
     console.log(movieInfo);
     return (
@@ -141,6 +152,7 @@ export default function Movie() {
                             type="text"
                             placeholder={movie.year}
                             name="year"
+                            onChange={handleChange}
                         />
                         <label>Genre</label>
                         <input
@@ -158,17 +170,18 @@ export default function Movie() {
                         />
                         <label>Trailer</label>
                         <input
-                            type="file"
+                            type="text"
                             placeholder={movie.trailer}
                             name="trailer"
                             onChange={handleChange}
                         />
+
                         <label>Video</label>
                         <input
                             type="file"
                             placeholder={movie.video}
                             name="video"
-                            onChange={handleChange}
+                            onChange={(e) => setVideo(e.target.files[0])}
                         />
                     </div>
                     <div className="productFormRight">
@@ -195,13 +208,26 @@ export default function Movie() {
                                 type="file"
                                 id="file"
                                 style={{ display: "none" }}
-                                name="profilePic"
+                                name="img"
                                 onChange={imageChange}
                                 // onChange={(e) => setProfilePic(e.target.files[0])}
                             />
                         </div>
-
-                        <button className="productButton">Update</button>
+                        {uploaded === 2 ? (
+                            <button
+                                className="addProductButton"
+                                onClick={handleSubmit}
+                            >
+                                Create
+                            </button>
+                        ) : (
+                            <button
+                                className="addProductButton"
+                                onClick={handleUpload}
+                            >
+                                Upload
+                            </button>
+                        )}
                     </div>
                 </form>
             </div>

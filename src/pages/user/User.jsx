@@ -54,7 +54,7 @@ export default function User() {
   const upload = (items) => {
     items.forEach((item) => {
       // const fileName = new Date().getTime() + item.label + item.file;
-      const storageRef = ref(storage, `/vouchers/${item.file.name}`);
+      const storageRef = ref(storage, `/users/${item.file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, item.file);
       uploadTask.on(
         "state_changed",
