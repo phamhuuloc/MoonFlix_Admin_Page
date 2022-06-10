@@ -9,5 +9,9 @@ const adminApi = {
     const url = "/api/users/stats";
     return axiosClient.get(url);
   },
+  getTopUser() {
+    const url = "/api/users/list/top";
+    return axiosClient.get(url);
+  },
 };
 export default adminApi;
