@@ -2,7 +2,7 @@ import axiosClient from "./axiosClient";
 
 const adminApi = {
   login(data) {
-    const url = "api/auth/login";
+    const url = "api/user/login";
     return axiosClient.post(url, data);
   },
   getStats() {

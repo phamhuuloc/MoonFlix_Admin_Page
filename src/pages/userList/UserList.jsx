@@ -16,7 +16,8 @@ export default function UserList() {
     const getUsersList = async () => {
       try {
         const res = await userApi.getUsersList();
-        dispatch(userSlice.actions.setUsers(res.data.users));
+        console.log(res.data.data)
+        dispatch(userSlice.actions.setUsers(res.data.data));
       } catch (err) {
         console.log(err);
       }
@@ -28,7 +29,7 @@ export default function UserList() {
   const handleDelete = async (id) => {
     try {
       console.log(id);
-      const newUsersList = users.filter((user) => user._id !== id);
+      const newUsersList = users.filter((user) => user.id !== id);
       dispatch(userSlice.actions.setUsers(newUsersList));
       const res = await userApi.deleteUser(id);
       toast.success(res.data.message);
@@ -38,7 +39,7 @@ export default function UserList() {
   };
 
   const columns = [
-    { field: "_id", headerName: "ID", width: 90 },
+    { field: "id", headerName: "ID", width: 90 },
     {
       field: "user",
       headerName: "User",
@@ -47,7 +48,7 @@ export default function UserList() {
         return (
           <div className="userListUser">
             <img className="userListImg" src={params.row.profilePic} alt="" />
-            {params.row.userncame}
+            {params.row.username}
           </div>
         );
       },
@@ -77,14 +78,14 @@ export default function UserList() {
         return (
           <>
             <Link
-              to={{ pathname: "/users/" + params.row._id }}
+              to={{ pathname: "/users/" + params.row.id }}
               state={{ user: params.row }}
             >
               <button className="userListEdit">Edit</button>
             </Link>
             <DeleteOutline
               className="userListDelete"
-              onClick={() => handleDelete(params.row._id)}
+              onClick={() => handleDelete(params.row.id)}
             />
           </>
         );
@@ -100,7 +101,7 @@ export default function UserList() {
         columns={columns}
         pageSize={8}
         checkboxSelection
-        getRowId={(r) => r._id}
+        getRowId={(r) => r.id}
       />
     </div>
   );
