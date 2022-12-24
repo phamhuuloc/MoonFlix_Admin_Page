@@ -11,7 +11,8 @@ axiosClient.interceptors.request.use((config) => {
   // Handle token here ...
   let accessToken = window.localStorage.getItem("token");
   if (accessToken) {
-    config.headers.token = `Bearer ${accessToken}`;
+    // config.headers.token = `Bearer ${accessToken}`;
+    config.headers.common['Authorization'] = `Bearer ${accessToken}` 
   }
 
   return config;

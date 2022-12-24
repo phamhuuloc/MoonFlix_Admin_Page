@@ -20,8 +20,8 @@ const userApi = {
   },
 
   deleteUser(id) {
-    const url = `api/users/delete/${id}`;
-    return axiosClient.delete(url);
+    const url = `api/user/delete/${id}`;
+    return axiosClient.post(url);
   },
 };
 export default userApi;
