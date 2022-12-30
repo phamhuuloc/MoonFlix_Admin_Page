@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { Link, useLocation } from "react-router-dom";
 import "./newListMovie.css";
 import storage from "../../firebase";
 import { useNavigate } from "react-router-dom";
@@ -7,18 +8,28 @@ import { useSelector, useDispatch } from "react-redux";
 import listMovieApi from "../../api/listMovieApi";
 import { listSlice } from "../../redux/reducer/listSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import list_movie_api from "../../api/list_movie_api";
 export default function NewListMovie() {
+
   const [list, setList] = useState(null);
+
+  // const [lm_list_id ,setLmListId] = useState(null);
+  // const [lm_movie_id, setLmMovieId] = useState(null);
+  
+  const [movieAdded, setMovieAdded] = useState(null);
+
   const navigate = useNavigate();
 
   const movies = useSelector((state) => state.movies.movies);
-  const listMovie = useSelector((state) => state.lists.list);
+  const listMovie = useSelector((state) => state.list.list);
+
+  
+
+
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   getMovies(dispatchMovie);
-  // }, [dispatchMovie]);
+
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -26,12 +37,14 @@ export default function NewListMovie() {
   };
 
   const handleSelect = (e) => {
-    let value = Array.from(e.target.selectedOptions, (option) => option.value);
-    setList({ ...list, [e.target.name]: value });
+    let value = e.target.value
+    setMovieAdded({ ...movieAdded, [e.target.name]: value });
   };
 
+
+
   const handleSubmit = async (e) => {
-    console.log(list);
+    
     e.preventDefault();
     try {
       const res = await listMovieApi.createListMovie(list);
@@ -40,7 +53,21 @@ export default function NewListMovie() {
     } catch (err) {
       toast.error(err.response.data);
     }
+  }
+
+ 
+  const handleAddMovie = async (e) => {
+
+    e.preventDefault();
+    try {
+      const res = await list_movie_api.addMovieIntoList(movieAdded);
+      toast.success(res.data.message);
+      // navigate("/lists");
+    } catch (err) {
+      toast.error(err.response.data);
+    }
   };
+  console.log(movieAdded)
   return (
     <div className="newProduct">
       <h1 className="addProductTitle">New List</h1>
@@ -75,24 +102,49 @@ export default function NewListMovie() {
         </div>
         <div className="formRight">
           <div className="addProductItem">
-            <label>Content</label>
+            <label>List</label>
             <select
-              multiple
-              name="content"
+            multiple
+              name="lm_list_id"
+           
+              onChange={handleSelect}
+              style={{ height: "280px" }}
+            >
+              {listMovie.map((list) => (
+                <option key={list.id} value={list.id}>
+                  {list.title}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="formRight">
+          <div className="addProductItem">
+            <label>Movies</label>
+            <select
+           multiple
+              name="lm_movie_id"
               onChange={handleSelect}
               style={{ height: "280px" }}
             >
               {movies.map((movie) => (
-                <option key={movie._id} value={movie._id}>
+                <option key={movie.id} value={movie.id}>
                   {movie.title}
                 </option>
               ))}
             </select>
           </div>
         </div>
+        
+        <div  className="addProductButtonContent">
+        <button className="addProductButton" onClick={handleAddMovie}>
+          Add Movie
+        </button>
         <button className="addProductButton" onClick={handleSubmit}>
           Create
         </button>
+        </div>
+      
       </form>
     </div>
   );

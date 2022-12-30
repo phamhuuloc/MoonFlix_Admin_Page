@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import "./movie.css";
+import { useEffect, useMemo, useState } from "react";
 import Chart from "../../components/chart/Chart";
 import { Publish } from "@material-ui/icons";
 import { useLocation } from "react-router-dom";
@@ -11,16 +12,29 @@ import {
 } from "firebase/storage";
 import storage from "../../firebase";
 import { toast } from "react-toastify";
-import { useState } from "react";
+
 import movieApi from "../../api/movieApi";
 export default function Movie() {
+    const MONTHS = useMemo(
+        () => [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Agu",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ],
+        []
+      );
     const location = useLocation();
     const movie = location.state.movie;
 
-    // const [title, setTitle] = useState(null);
-    // const [year, setYear] = useState(null);
-    // const [genre, setGenre] = useState(null);
-    // const [limit, setLimit] = useState(null);
     const [img, setImg] = useState(null);
     const [trailer, setTrailer] = useState(null);
     const [video, setVideo] = useState(null);
@@ -28,6 +42,29 @@ export default function Movie() {
 
     const [movieInfo, setMovieInfo] = useState({});
 
+    const [movieStas, setMovieStas] = useState([]);
+
+
+    useEffect(() => {
+      const getStats = async () => {
+        try {
+          const res = await movieApi.getStats(movie.id);
+          console.log(res);
+          const statsList = res.data.data.sort(function (a, b) {
+            return a.month - b.month;
+          });
+          statsList.map((item) =>
+            setMovieStas((prev) => [
+              ...prev,
+              { name: MONTHS[item.month - 1], "amount": item.total },
+            ])
+          );
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      getStats();
+    }, [MONTHS]);
     const handleChange = (e) => {
         const value = e.target.value;
         setMovieInfo({ ...movieInfo, [e.target.name]: value });
@@ -84,9 +121,10 @@ export default function Movie() {
             console.log(err);
         }
     };
-    console.log(movieInfo);
+    console.log(movieStas);
     return (
         <div className="product">
+           
             <div className="productTitleContainer">
                 <h1 className="productTitle">Movie</h1>
                 <Link to="/newMovies">
@@ -95,6 +133,7 @@ export default function Movie() {
             </div>
             <div className="productTop">
                 <div className="productTopRight">
+                <Chart data={movieStas} title="Movie Analytics" grid dataKey="amount" />
                     <div className="productInfoTop">
                         <img
                             src={movie.img}
@@ -107,7 +146,7 @@ export default function Movie() {
                         <div className="productInfoItem">
                             <span className="productInfoKey">id: </span>
                             <span className="productInfoValue">
-                                {movie._id}
+                                {movie.id}
                             </span>
                         </div>
                         <div className="productInfoItem">
@@ -125,7 +164,7 @@ export default function Movie() {
                         <div className="productInfoItem">
                             <span className="productInfoKey">limit:</span>
                             <span className="productInfoValue">
-                                {movie.limit}
+                                {movie._limit}
                             </span>
                         </div>
                         <div className="productInfoItem">
@@ -136,6 +175,7 @@ export default function Movie() {
                         </div>
                     </div>
                 </div>
+                
             </div>
             <div className="productBottom">
                 <form className="productForm">

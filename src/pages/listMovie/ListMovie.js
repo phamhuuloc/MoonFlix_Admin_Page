@@ -11,7 +11,7 @@ export default function ListMovie() {
   // const [data, setData] = useState(productRows);
 
   const dispatch = useDispatch();
-  const lists = useSelector((state) => state.lists.list);
+  const lists = useSelector((state) => state.list.list);
 
   useEffect(() => {
     const getListMovie = async () => {
@@ -28,7 +28,7 @@ export default function ListMovie() {
   const handleDelete = async (id) => {
     try {
       console.log(id);
-      const newListMovie = lists.filter((movie) => movie._id !== id);
+      const newListMovie = lists.filter((movie) => movie.id !== id);
       dispatch(listSlice.actions.setLists(newListMovie));
       const res = await listMovieApi.deleteListMovie(id);
       toast.success(res.data.message);
@@ -39,7 +39,7 @@ export default function ListMovie() {
   };
 
   const columns = [
-    { field: "_id", headerName: "ID", width: 250 },
+    { field: "id", headerName: "ID", width: 250 },
     { field: "title", headerName: "title", width: 250 },
     { field: "genre", headerName: "Genre", width: 150 },
     { field: "type", headerName: "type", width: 150 },
@@ -51,14 +51,14 @@ export default function ListMovie() {
         return (
           <>
             <Link
-              to={{ pathname: "/list/" + params.row._id }}
+              to={{ pathname: "/list/" + params.row.id }}
               state={{ list: params.row }}
             >
               <button className="productListEdit">Edit</button>
             </Link>
             <DeleteOutline
               className="productListDelete"
-              onClick={() => handleDelete(params.row._id)}
+              onClick={() => handleDelete(params.row.id)}
             />
           </>
         );
@@ -74,7 +74,7 @@ export default function ListMovie() {
         columns={columns}
         pageSize={8}
         checkboxSelection
-        getRowId={(r) => r._id}
+        getRowId={(r) => r.id}
       />
     </div>
   );

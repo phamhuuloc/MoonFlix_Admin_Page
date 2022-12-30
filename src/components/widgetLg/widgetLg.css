@@ -20,12 +20,13 @@
 }
 .widgetLgWrapper {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .widgetLgTitle {
   font-size: 22px;
   font-weight: 600;
+  margin-right: 200px;
 }
 
 .widgetLgTable {

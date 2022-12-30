@@ -3,76 +3,87 @@ import { DeleteOutline } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { voucherSlice } from "../../redux/reducer/voucherSlice";
+import { supplierSlice} from "../../redux/reducer/supplierSlice";
 import { toast } from "react-toastify";
 import axios from "axios";
-import voucherApi from "../../api/voucherApi";
-import "./listVoucher.css";
+import supplierApi from "../../api/supplierApi";
+import "./listSupplier.css"
 
-export default function VoucherList() {
+export default function SupplierList() {
   const dispatch = useDispatch();
-  const vouchers = useSelector((state) => state.vouchers.vouchers);
+  const suppliers = useSelector((state) => state.suppliers.suppliers);
 
   useEffect(() => {
-    const getVoucherList = async () => {
+    const getSupplierList = async () => {
       try {
-        const res = await voucherApi.getVochers();
-        console.log(res);
-        dispatch(voucherSlice.actions.setVoucher(res.data.data));
+        const res = await supplierApi.getSuppliers();
+        console.log(res.data.data);
+        dispatch(supplierSlice.actions.setSupplier(res.data.data));
       } catch (err) {
         console.log(err);
       }
     };
 
-    getVoucherList();
+    getSupplierList();
   }, []);
 
   const handleDelete = async (id) => {
     try {
       console.log(id);
-      const newVoucherList = vouchers.filter((voucher) => voucher.id !== id);
-      dispatch(voucherSlice.actions.setVoucher(newVoucherList));
-      const res = await voucherApi.deleteVoucher(id);
+      const newSupplierList = suppliers.filter((supplier) => supplier.id !== id);
+      dispatch(supplierSlice.actions.setSupplier(newSupplierList));
+      const res = await supplierApi.deleteSupplier(id);
       toast.success(res.data.message);
     } catch (err) {
       toast.error(err.response.data);
     }
   };
-  console.log(vouchers);
+  console.log(suppliers);
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
+    // {
+    //   field: "sl_name",
+    //   headerName: "Name",
+    //   width: 180,
+    //   renderCell: (params) => {
+    //     return (
+    //       <div className="userListUser">
+    //         <img className="voucherListImg" src={params.row.sl_name} alt="" />
+    //       </div>
+    //     );
+    //   },
+    // },
     {
-      field: "image",
-      headerName: "Image",
-      width: 180,
-      renderCell: (params) => {
-        return (
-          <div className="userListUser">
-            <img className="voucherListImg" src={params.row.image} alt="" />
-          </div>
-        );
-      },
-    },
-    {
-      field: "percent_discount",
-      headerName: "Percent Discount",
+      field: "sl_name",
+      headerName: "Name",
       width: 200,
       renderCell: (params) => {
         return (
-          <div className="userListUser">{params.row.percent_discount}</div>
+          <div className="userListUser">{params.row.sl_name}</div>
         );
       },
     },
     {
-      field: "create_at",
-      headerName: "Create At",
+      field: "sl_email",
+      headerName: "Email",
+      width: 200,
+      renderCell: (params) => {
+        return (
+          <div className="userListUser">{params.row.sl_email}</div>
+        );
+      },
+    },
+    {
+      field: "sl_phone",
+      headerName: "Phone",
       width: 180,
     },
     {
-      field: "point_cost",
-      headerName: "Point Cost",
+      field: "sl_address",
+      headerName: "Address",
       width: 160,
     },
+   
 
     {
       field: "action",
@@ -82,8 +93,8 @@ export default function VoucherList() {
         return (
           <>
             <Link
-              to={{ pathname: "/voucher/" + params.row.id }}
-              state={{ voucher: params.row }}
+              to={{ pathname: "/supplier/" + params.row.id }}
+              state={{ supplier: params.row }}
             >
               <button className="userListEdit">Edit</button>
             </Link>
@@ -100,7 +111,7 @@ export default function VoucherList() {
   return (
     <div className="userList">
       <DataGrid
-        rows={vouchers}
+        rows={suppliers}
         disableSelectionOnClick
         columns={columns}
         pageSize={8}

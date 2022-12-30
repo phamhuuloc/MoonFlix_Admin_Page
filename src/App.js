@@ -23,6 +23,9 @@ import { useSelector } from "react-redux";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import SupplierList from "./pages/listSuppliers/supplier";
+import Supplier from "./pages/supplier/supplier";
+import NewSupplier from "./pages/newSupplier/newSupplier";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -77,7 +80,11 @@ function App() {
 
               <Route path="/vouchers" element={<VoucherList />} />
               <Route path="/newVouchers" element={<NewVouchers />} />
-              <Route path="/vouchers/:id" element={<Voucher />} />
+              <Route path="/voucher/:id" element={<Voucher />} />
+
+              <Route path="/suppliers" element={<SupplierList />} />
+              <Route path="/supplier/:id" element={<Supplier />} />
+              <Route path="/newSupplier" element={<NewSupplier />} />
             </>
           )}
         </Routes>

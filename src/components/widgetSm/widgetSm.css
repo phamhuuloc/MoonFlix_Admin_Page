@@ -34,6 +34,8 @@
 .widgetSmUser {
     display: flex;
     flex-direction: column;
+    width: 150px;
+    margin-left: 80px;
 }
 
 .widgetSmUsername {

@@ -13,16 +13,22 @@ import {
 
 export default function NewMovie() {
   const [movie, setMovie] = useState(null);
-  const [img, setImg] = useState(null);
-  // const [imgTitle, setImgTitle] = useState(null);
-  const [imgSm, setImgSm] = useState(null);
-  const [trailer, setTrailer] = useState(null);
-  const [video, setVideo] = useState(null);
+  const [supplieries_id, setSupplierId] = useState(null);
+  const [_desc , setDesc] = useState(null);
+  const [img ,setImg] = useState(null);
+  const [imgSm ,setImgSm] = useState(null);
+  const [trailer,setStrailer] = useState(null);
+  const [video ,setVideo] = useState(null);
+  const [year , setYear] = useState(null);
+  const [_limit,setLimt] =  useState(null);
+  const [price ,setPrice] = useState(null);
+  const [clicked,setClicked] = useState(null);
+  const [isSeries, setSeries] = useState(null);
   const [uploaded, setUploaded] = useState(0);
 
   const handleChange = (e) => {
     const value = e.target.value;
-    setMovie({ ...movie, [e.target.name]: value });
+    setMovie({ ...movie, [e.target.name]: value ,supplier_id: 1 , clicked:0, isSeries: false});
   };
 
   const upload = (items) => {
@@ -115,7 +121,7 @@ export default function NewMovie() {
           <input
             type="text"
             placeholder="description"
-            name="desc"
+            name="_desc"
             onChange={handleChange}
           />
         </div>
@@ -128,7 +134,7 @@ export default function NewMovie() {
             onChange={handleChange}
           />
         </div>
-        <div className="addProductItem">
+        {/* <div className="addProductItem">
           <label>Genre</label>
           <input
             type="text"
@@ -136,7 +142,7 @@ export default function NewMovie() {
             name="genre"
             onChange={handleChange}
           />
-        </div>
+        </div> */}
         <div className="addProductItem">
           <label>Price</label>
           <input
@@ -151,7 +157,7 @@ export default function NewMovie() {
           <input
             type="text"
             placeholder="limit"
-            name="limit"
+            name="_limit"
             onChange={handleChange}
           />
         </div>

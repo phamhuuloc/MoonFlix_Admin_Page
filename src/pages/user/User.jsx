@@ -17,16 +17,18 @@ import {
 } from "firebase/storage";
 
 import storage from "../../firebase";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation ,useNavigate} from "react-router-dom";
 import { useState } from "react";
 import userApi from "../../api/userApi";
 import { toast } from "react-toastify";
 import "./user.css";
 
 export default function User() {
+  const navigate = useNavigate();
+ 
   const location = useLocation();
   const user = location.state.user;
-
+  console.log(user)
   const [username, setUsername] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
   const [email, setEmail] = useState(null);
@@ -37,15 +39,18 @@ export default function User() {
   const [uploaded, setUploaded] = useState(0);
   const [userInfo, setUserInfo] = useState(null);
 
+
   const handleChange = (e) => {
     const value = e.target.value;
-    setUserInfo({ ...userInfo, [e.target.name]: value });
+    setUserInfo({ ...userInfo, [e.target.name]: value, isAdmin: isAdmin, face_id: user.face_id, money_spended: user.money_spended });
   };
+
   const imageChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       setProfilePic(e.target.files[0]);
     }
   };
+  console.log(userInfo)
 
   const removeSelectedImage = () => {
     setProfilePic();
@@ -86,8 +91,9 @@ export default function User() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await userApi.updateUser(user._id, userInfo);
+      const res = await userApi.updateUser(user.id, userInfo);
       toast.success(res.data.message);
+      navigate("/")
     } catch (err) {
       console.log(err);
     }

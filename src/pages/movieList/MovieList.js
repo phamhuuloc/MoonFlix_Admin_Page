@@ -10,16 +10,15 @@ import axios from "axios";
 import movieApi from "../../api/movieApi";
 
 export default function ProductList() {
-  // const [movies, setMovies] = useState([]);
+  
   const dispatch = useDispatch();
   const movies = useSelector((state) => state.movies.movies);
-  console.log(movies);
+
 
   useEffect(() => {
     const getMovie = async () => {
       try {
         const res = await movieApi.getMovies();
-        // setMovies(res.data.data);
         dispatch(movieSlice.actions.setMovie(res.data.data));
       } catch (err) {
         console.log(err);
@@ -27,11 +26,12 @@ export default function ProductList() {
     };
     getMovie();
   }, []);
-  // console.log(dispatch(movieSlice.actions.getMovie()));
+
+  
   const handleDelete = async (id) => {
     try {
       console.log(id);
-      const newMovies = movies.filter((movie) => movie._id !== id);
+      const newMovies = movies.filter((movie) => movie.id !== id);
       dispatch(movieSlice.actions.setMovie(newMovies));
       const res = await movieApi.deleteMovie(id);
       toast.success(res.data.message);
@@ -42,7 +42,7 @@ export default function ProductList() {
   };
 
   const columns = [
-    { field: "_id", headerName: "ID", width: 90 },
+    { field: "id", headerName: "ID", width: 90 },
     {
       field: "movie",
       headerName: "Movie",
@@ -93,7 +93,7 @@ export default function ProductList() {
           <>
             <Link
               to={{
-                pathname: "/movie/" + params.row._id,
+                pathname: "/movie/" + params.row.id,
               }}
               state={{ movie: params.row }}
             >
@@ -101,7 +101,7 @@ export default function ProductList() {
             </Link>
             <DeleteOutline
               className="productListDelete"
-              onClick={() => handleDelete(params.row._id)}
+              onClick={() => handleDelete(params.row.id)}
             />
           </>
         );
@@ -117,7 +117,7 @@ export default function ProductList() {
         columns={columns}
         pageSize={8}
         checkboxSelection
-        getRowId={(r) => r._id}
+        getRowId={(r) => r.id}
       />
     </div>
   );

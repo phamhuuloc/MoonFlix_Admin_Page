@@ -6,12 +6,13 @@ const adminApi = {
     return axiosClient.post(url, data);
   },
   getStats() {
-    const url = "/api/users/stats";
+    const url = "/api/user/status";
     return axiosClient.get(url);
   },
   getTopUser() {
-    const url = "/api/users/list/top";
+    const url = "/api/user/top";
     return axiosClient.get(url);
   },
+
 };
 export default adminApi;

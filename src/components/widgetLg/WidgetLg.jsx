@@ -23,7 +23,7 @@ export default function WidgetLg() {
     };
     getListTopDonate();
   }, []);
-  console.log(topUsers);
+
   return (
     <div className="widgetLg">
       {/* <h3 className="widgetLgTitle">Top User</h3> */}
@@ -66,7 +66,7 @@ export default function WidgetLg() {
           </tr>
           {listCurrentTop.map((user) => {
             return (
-              <tr className="widgetLgTr">
+              <tr className="widgetLgTr" key={user.id}>
                 <td className="widgetLgUser">
                   <img src={user.profilePic} alt="" className="widgetLgImg" />
                   <span className="widgetLgName">{user.username}</span>

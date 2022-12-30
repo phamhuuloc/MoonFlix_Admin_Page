@@ -4,47 +4,50 @@ import { useEffect, useState } from "react";
 import userApi from "../../api/userApi";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import movieApi from "../../api/movieApi";
 export default function WidgetSm() {
-  const [newUsers, setNewUsers] = useState([]);
+  const [topMovie, setTopMovie] = useState([]);
   useEffect(() => {
-    const getNewUsers = async () => {
+    const getTopMovie = async () => {
       try {
-        const res = await userApi.getNewUsers();
-        setNewUsers(res.data.users);
+        const res = await movieApi.getTopMovies();
+        setTopMovie(res.data.data);
       } catch (err) {
         console.log(err);
       }
     };
-    getNewUsers();
+    getTopMovie();
   }, []);
-  console.log(newUsers);
+  
   return (
     <div className="widgetSm">
-      <span className="widgetSmTitle">New Join Members</span>
+      <span className="widgetSmTitle">Top 10 Movies</span>
       <ul className="widgetSmList">
-        {newUsers.map((user) => {
+        {topMovie.map((movie) => {
           return (
-            <li className="widgetSmListItem">
+            <li className="widgetSmListItem" key={movie.id}>
               <img
                 src={
-                  user.profilePic ||
+                  movie.img ||
                   "https://pbs.twimg.com/media/D8tCa48VsAA4lxn.jpg"
                 }
                 alt=""
                 className="widgetSmImg"
               />
               <div className="widgetSmUser">
-                <span className="widgetSmUserTitle">User Name</span>
-                <span className="widgetSmUsername">{user.username}</span>
+                <span className="widgetSmUserTitle">Movie Name</span>
+                <span className="widgetSmUsername">{movie.title}</span>
               </div>
               <div className="widgetSmUser">
-                <span className="widgetSmUserTitle">{user.createAt}</span>
+                <span className="widgetSmUserTitle">{movie.create_at}</span>
               </div>
 
               <button className="widgetSmButton">
                 <Link
-                  to={{ pathname: "/users/" + user._id }}
-                  state={{ user: user }}
+                   to={{
+                    pathname: "/movie/" + movie.id,
+                  }}
+                  state={{ movie: movie }}
                 >
                   <Visibility className="widgetSmIcon" />
                   Display

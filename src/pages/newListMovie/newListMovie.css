@@ -40,4 +40,10 @@
   font-weight: 600;
   cursor: pointer;
   align-self: center;
+  margin-left: 20px;
+}
+.addProductButtonContent{
+  display:  flex;
+
+  
 }

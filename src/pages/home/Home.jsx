@@ -33,12 +33,12 @@ export default function Home() {
         const res = await adminApi.getStats();
         console.log(res);
         const statsList = res.data.data.sort(function (a, b) {
-          return a._id - b._id;
+          return a.month - b.month;
         });
         statsList.map((item) =>
           setUserStats((prev) => [
             ...prev,
-            { name: MONTHS[item._id - 1], "New User": item.total },
+            { name: MONTHS[item.month - 1], "New User": item.total },
           ])
         );
       } catch (err) {

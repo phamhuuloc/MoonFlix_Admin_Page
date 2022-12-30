@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import "./newVoucher.css";
+import "./newSupplier.css";
 import storage from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import voucherApi from "../../api/voucherApi";
+import supplierApi from "../../api/supplierApi";
 import {
   getStorage,
   ref,
@@ -23,22 +23,21 @@ import {
   Loyalty,
 } from "@material-ui/icons";
 
-export default function NewVouchers() {
-  const [image, setImage] = useState(null);
-  const [percent_discount , setPercentDiscount] = useState(null)
-  const [point_cost, setPoint_Cost] = useState(null);
-  const [supplier_name, setSupplier_name] = useState(null);
-  const [description, setDescription] = useState(null);
-  
-  const navigate = useNavigate();
-  const [voucher, setVoucher] = useState(null);
+export default function NewSupplier() {
+  const [sl_name,setSlName] = useState(null);
+  const [sl_email, setSlEmail] = useState(null);
+  const [sl_phone, setSlPhone] = useState(null);
+  const [sl_address , setSlAddress] = useState(null);
+  const [image , setImage] = useState(null);
+ 
+  const [supplier, setsupplier] = useState(null);
   const [uploaded, setUploaded] = useState(0);
-
+  const navigate = useNavigate()
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const value = e.target.value;
-    setVoucher({ ...voucher, [e.target.name]: value });
+    setsupplier({ ...supplier, [e.target.name]: value });
   };
 
   const imageChange = (e) => {
@@ -50,7 +49,7 @@ export default function NewVouchers() {
   const upload = (items) => {
     items.forEach((item) => {
       // const fileName = new Date().getTime() + item.label + item.file;
-      const storageRef = ref(storage, `/vouchers/${item.file.name}`);
+      const storageRef = ref(storage, `/suppliers/${item.file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, item.file);
       uploadTask.on(
         "state_changed",
@@ -64,7 +63,7 @@ export default function NewVouchers() {
         },
         async () => {
           getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-            setVoucher((prev) => {
+            setsupplier((prev) => {
               return { ...prev, [item.label]: url };
             });
             setUploaded((prev) => prev + 1);
@@ -82,55 +81,55 @@ export default function NewVouchers() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await voucherApi.createVoucher(voucher);
+      const res = await supplierApi.createSupplier(supplier);
       console.log(res);
       toast.success(res.data.message);
-      navigate("/vouchers");
+      navigate("/suppliers");
     } catch (err) {
-      toast.error(err.response.data);
+      toast.error(err.response);
     }
   };
-  console.log(voucher);
+  console.log(supplier);
   return (
-    <div className="voucherCreate">
-      <span className="voucherCreateTitle">Create New Voucher</span>
-      <form className="voucherCreateForm">
-        <div className="voucherCreateLeft">
-          <div className="voucherCreateItem">
-            <label>Point Cost</label>
-            <input
-              type="text"
-              placeholder="annabeck99"
-              name="point_cost"
-              onChange={handleChange}
-              className="voucherCreateInput"
-            />
-          </div>
-          <div className="voucherCreateItem">
-            <label>Percent Discount</label>
-            <input
-              type="text"
-              placeholder="annabeck99"
-              name="percent_discount"
-              onChange={handleChange}
-              className="voucherCreateInput"
-            />
-          </div>
-          <div className="userUpdateItem">
+    <div className="supplierCreate">
+      <span className="supplierCreateTitle">Create New supplier</span>
+      <form className="supplierCreateForm">
+        <div className="supplierCreateLeft">
+          <div className="supplierCreateItem">
             <label>Supplier Name</label>
             <input
               type="text"
-              name="supplier_name"
+              placeholder="annabeck99"
+              name="sl_name"
               onChange={handleChange}
-              placeholder="Netflix"
-              className="voucherCreateInput"
+              className="supplierCreateInput"
             />
           </div>
-          <div className="voucherCreateItem">
-            <label>Description</label>
+          <div className="supplierCreateItem">
+            <label>Supplier Email </label>
             <input
               type="text"
-              name="description"
+              placeholder="annabeck99"
+              name="sl_email"
+              onChange={handleChange}
+              className="supplierCreateInput"
+            />
+          </div>
+          <div className="userUpdateItem">
+            <label>Supplier Phone</label>
+            <input
+              type="text"
+              name="sl_phone"
+              onChange={handleChange}
+              placeholder="Netflix"
+              className="supplierCreateInput"
+            />
+          </div>
+          <div className="supplierCreateItem">
+            <label>Supplier Address</label>
+            <input
+              type="text"
+              name="sl_address"
               onChange={handleChange}
               placeholder="The best last for one "
               className="userUpdateInput"
@@ -138,25 +137,25 @@ export default function NewVouchers() {
           </div>
       
         </div>
-        <div className="voucherCreateRight">
-          <div className="voucherCreateUpload">
+        <div className="supplierCreateRight">
+          <div className="supplierCreateUpload">
             {image ? (
               <div>
                 <img
                   src={URL.createObjectURL(image)}
                   alt="Thumb"
-                  className="voucherCreateImg"
+                  className="supplierCreateImg"
                 />
               </div>
             ) : (
               <img
-                className="voucherCreateImg"
+                className="supplierCreateImg"
                 src="https://steamykitchen.com/wp-content/uploads/2021/04/43fc8a7c-4e07-41ca-9c60-023ef2afec2c.png"
                 alt=""
               />
             )}
             <label htmlFor="file">
-              <Publish className="voucherCreateIcon" />
+              <Publish className="supplierCreateIcon" />
             </label>
             <input
               type="file"

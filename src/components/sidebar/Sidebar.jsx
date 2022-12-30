@@ -71,7 +71,18 @@ export default function Sidebar() {
                 Voucher
               </li>
             </Link>
-
+            <Link to="/suppliers" className="link">
+              <li className="sidebarListItem">
+                <PermIdentity className="sidebarIcon" />
+                Suppliers
+              </li>
+            </Link>
+            <Link to="/newSupplier" className="link">
+              <li className="sidebarListItem">
+                <BarChart className="sidebarIcon" />
+                Add Supplier
+              </li>
+            </Link>
             <Link to="/newMovies" className="link">
               <li className="sidebarListItem">
                 <BarChart className="sidebarIcon" />

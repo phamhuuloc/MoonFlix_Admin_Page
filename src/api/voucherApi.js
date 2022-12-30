@@ -2,21 +2,21 @@ import axiosClient from "./axiosClient";
 
 const voucherApi = {
   getVochers(numberPage) {
-    const url = `api/vouchers/list?page=${numberPage}`;
+    const url = `/vouchers`;
     return axiosClient.get(url);
   },
   createVoucher(voucher) {
-    const url = "api/vouchers/create";
+    const url = "api/voucher/create";
     return axiosClient.post(url, voucher);
   },
   updateVoucher(id, voucher) {
-    const url = `api/vouchers/update/${id}`;
+    const url = `api/voucher/update/${id}`;
     return axiosClient.post(url, voucher);
   },
 
   deleteVoucher(id) {
-    const url = `api/vouchers/delete/${id}`;
-    return axiosClient.delete(url);
+    const url = `voucher/delete/${id}`;
+    return axiosClient.post(url);
   },
 };
 export default voucherApi;

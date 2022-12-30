@@ -2,20 +2,29 @@ import "./newUser.css";
 import { useState } from "react";
 import userApi from "../../api/userApi";
 import { toast } from "react-toastify";
+import {  useLocation } from "react-router-dom";
 
 export default function NewUser() {
+ 
+  
+
   const [username, setUsername] = useState(null);
   const [email, setEmail] = useState(null);
-  const [phone, setPhone] = useState(null);
   const [password, setPassword] = useState(null);
+  const [profilePic ,setProfilePic]  = useState("");
+  const [phone, setPhone] = useState(null);
   const [wallet_balance, setWallet_Balance] = useState(null);
-  const [point, setPoint] = useState(null);
+  const [point, setPoint] = useState();
+  // const [moneySpended ,setMoneySpended] = useState(0);
+  // const [faceId , setFaceId] = useState("");
+  // const [isAdmin , setIsAdmin] =   useState(false);
+
 
   const [userInfo, setUserInfo] = useState(null);
-
+  console.log(profilePic)
   const handleChange = (e) => {
     const value = e.target.value;
-    setUserInfo({ ...userInfo, [e.target.name]: value });
+    setUserInfo({ ...userInfo, [e.target.name]: value ,profilePic: "https://pm1.narvii.com/6915/b750d3766167c6d41dfd8f55e45f72631d100409r1-320-320v2_hq.jpg"});
   };
   const handleCreateUser = async (e) => {
     e.preventDefault();
@@ -85,7 +94,19 @@ export default function NewUser() {
             onChange={handleChange}
           />
         </div>
-
+ 
+          {/* <div className="newUserItem">
+                  <label>Type</label>
+                  <select
+                    name="isAdmin"
+                    className="userUpdateInput"
+                    onChange={handleChange}
+                  >
+                    <option value="false">isMember</option>
+                    <option value="true">isAdmin</option>
+                  </select>
+          </div> */}
+        
         <div className="newUserItem">
           <div className="newUserItem">
             <label>Point</label>

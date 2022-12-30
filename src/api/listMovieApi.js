@@ -2,11 +2,11 @@ import axiosClient from "./axiosClient";
 
 const listMovieApi = {
   getListMovie() {
-    const url = "api/list";
+    const url = "/lists";
     return axiosClient.get(url);
   },
   createListMovie(list) {
-    const url = "api/list/create";
+    const url = "create/list";
     return axiosClient.post(url, list);
   },
   updateListMovie(id, list) {
@@ -15,8 +15,8 @@ const listMovieApi = {
   },
 
   deleteListMovie(id) {
-    const url = `api/list/delete/${id}`;
-    return axiosClient.delete(url);
+    const url = `/lists/delete/${id}`;
+    return axiosClient.post(url);
   },
 };
 export default listMovieApi;

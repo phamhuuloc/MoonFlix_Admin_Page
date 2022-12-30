@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import "./voucher.css";
+import "./supplier.css";
 import { useSelector, useDispatch } from "react-redux";
 import Chart from "../../components/chart/Chart";
 import { Publish } from "@material-ui/icons";
 import { useLocation } from "react-router-dom";
-import voucherApi from "../../api/voucherApi";
+import supplierApi from "../../api/supplierApi";
 import {
     getStorage,
     ref,
@@ -14,26 +14,25 @@ import {
 import storage from "../../firebase";
 import { toast } from "react-toastify";
 import { useState } from "react";
-export default function Voucher() {
+export default function Supplier() {
+
     const location = useLocation();
-    const voucher = location.state.voucher; 
-    console.log(voucher)
-    const [image, setImage] = useState(null);
-    const [percent_discount , setPercentDiscount] = useState(null)
-    const [point_cost, setPoint_Cost] = useState(null);
-    const [supplier_name, setSupplier_name] = useState(null);
-    const [description, setDescription] = useState(null);
+    const supplier = location.state.supplier;
 
-    const [voucherInfo, setVoucherInfo] = useState(null);
+    
+    const [sl_name,setSlName] = useState(null);
+    const [sl_email, setSlEmail] = useState(null);
+    const [sl_phone, setSlPhone] = useState(null);
+    const [sl_address , setSlAddress] = useState(null);
+    const [image , setImage] = useState(null);
     const [uploaded, setUploaded] = useState(0);
-
+    const [supplierInfo, setSupplierInfo] = useState(null);
     const dispatch = useDispatch();
 
-    const [movieInfo, setMovieInfo] = useState(null);
 
     const handleChange = (e) => {
-        const value = e.target.name;
-        setMovieInfo({ ...movieInfo, [e.target.name]: value });
+        const value = e.target.value;
+        setSupplierInfo({ ...supplierInfo, [e.target.name]: value });
     };
     const removeSelectedImage = () => {
         setImage();
@@ -44,11 +43,12 @@ export default function Voucher() {
             setImage(e.target.files[0]);
         }
     };
+    console.log(supplierInfo)
 
     const upload = (items) => {
         items.forEach((item) => {
             // const fileName = new Date().getTime() + item.label + item.file;
-            const storageRef = ref(storage, `/vouchers/${item.file.name}`);
+            const storageRef = ref(storage, `/supplier/${item.file.name}`);
             const uploadTask = uploadBytesResumable(storageRef, item.file);
             uploadTask.on(
                 "state_changed",
@@ -62,7 +62,7 @@ export default function Voucher() {
                 },
                 async () => {
                     getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                        setVoucherInfo((prev) => {
+                        setSupplierInfo((prev) => {
                             return { ...prev, [item.label]: url };
                         });
                         setUploaded((prev) => prev + 1);
@@ -79,24 +79,24 @@ export default function Voucher() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await voucherApi.updateVoucher(
-                voucher.id,
-                voucherInfo
+            const res = await supplierApi.updateSupplier(
+                supplier.id,
+                supplierInfo
             );
             console.log(res);
             toast.success(res.data.message);
-            // navigate("/vouchers");
+            // navigate("/suppliers");
         } catch (err) {
-            toast.error(err.response.data);
+            toast.error(err.response);
         }
     };
-    console.log(voucher);
+    console.log(supplierInfo);
 
     return (
         <div className="product">
             <div className="productTitleContainer">
-                <h1 className="productTitle">Voucher</h1>
-                <Link to="/newVouchers">
+                <h1 className="productTitle">supplier</h1>
+                <Link to="/newSupplier">
                     <button className="productAddButton">Create</button>
                 </Link>
             </div>
@@ -104,29 +104,35 @@ export default function Voucher() {
                 <div className="productTopRight">
                     <div className="productInfoTop">
                         <img
-                            src={voucher.image}
+                            src={supplier.image}
                             alt=""
                             className="productInfoImg"
                         />
-                        <span className="productName">{voucher.title}</span>
+                        <span className="productName">{supplier.title}</span>
                     </div>
                     <div className="productInfoBottom">
                         <div className="productInfoItem">
                             <span className="productInfoKey">id: </span>
                             <span className="productInfoValue">
-                                {voucher.id}
+                                {supplier.id}
                             </span>
                         </div>
                         <div className="productInfoItem">
-                            <span className="productInfoKey">Point Cost:</span>
+                            <span className="productInfoKey">Name</span>
                             <span className="productInfoValue">
-                                {voucher.point_cost}
+                                {supplier.sl_name}
                             </span>
                         </div>
                         <div className="productInfoItem">
-                            <span className="productInfoKey">Create At:</span>
+                            <span className="productInfoKey">Email </span>
                             <span className="productInfoValue">
-                                {voucher.create_at}
+                                {supplier.sl_email}
+                            </span>
+                        </div>
+                        <div className="productInfoItem">
+                            <span className="productInfoKey">Phone </span>
+                            <span className="productInfoValue">
+                                {supplier.sl_phone}
                             </span>
                         </div>
                     </div>
@@ -135,30 +141,32 @@ export default function Voucher() {
             <div className="productBottom">
                 <form className="productForm">
                     <div className="productFormLeft">
-                        <label>Point Cost</label>
-                        <input
-                            type="text"
-                            placeholder={voucher.point_cost}
-                            name="title"
-                            onChange={handleChange}
-                        />
-                        <input
-                            type="text"
-                            placeholder={voucher.percent_discount}
-                            name="title"
-                            onChange={handleChange}
-                        />
                         <label>Supplier Name</label>
                         <input
                             type="text"
-                            placeholder={voucher.supplier_name}
-                            name="year"
+                            placeholder={supplier.sl_name}
+                            name="sl_name"
+                            onChange={handleChange}
                         />
-                        <label>Description</label>
+                        <label>Supplier Email</label>
                         <input
                             type="text"
-                            placeholder={voucher.description}
-                            name="genre"
+                            placeholder={supplier.sl_email}
+                            name="sl_email"
+                            onChange={handleChange}
+                        />
+                        <label> Supplier Phone</label>
+                        <input
+                            type="text"
+                            placeholder={supplier.sl_phone}
+                            onChange={handleChange}
+                            name="sl_phone"
+                        />
+                        <label>Supplier Adress</label>
+                        <input
+                            type="text"
+                            placeholder={supplier.sl_address}
+                            name="sl_address"
                             onChange={handleChange}
                         />
                       
@@ -176,7 +184,7 @@ export default function Voucher() {
                             ) : (
                                 <img
                                     className="userUpdateImg"
-                                    src={voucher.image}
+                                    src={supplier.image}
                                     alt=""
                                 />
                             )}
@@ -187,7 +195,7 @@ export default function Voucher() {
                                 type="file"
                                 id="file"
                                 style={{ display: "none" }}
-                                name="profilePic"
+                                name="image"
                                 onChange={imageChange}
                                 // onChange={(e) => setProfilePic(e.target.files[0])}
                             />
