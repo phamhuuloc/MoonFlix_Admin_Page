@@ -1,6 +1,7 @@
 .product {
   flex: 4;
   padding: 20px;
+  overflow: scroll;
 }
 
 .productTitleContainer {
