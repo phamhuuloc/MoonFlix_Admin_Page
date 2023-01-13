@@ -11,7 +11,7 @@ const listMovieApi = {
   },
   updateListMovie(id, list) {
     const url = `api/list/update/${id}`;
-    return axiosClient.put(url, list);
+    return axiosClient.post(url, list);
   },
 
   deleteListMovie(id) {
